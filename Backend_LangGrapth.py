@@ -1,6 +1,7 @@
 import os
 from langgraph.graph import StateGraph, START, END
 from langgraph.graph.message import BaseMessage
+from langchain_core.messages import HumanMessage, BaseMessage
 from langgraph.checkpoint.memory import InMemorySaver
 from langgraph.graph.message import add_messages
 from langchain_groq import ChatGroq
@@ -31,3 +32,13 @@ graph.add_edge(START, "chat_node")
 graph.add_edge("chat_node", END)
 
 chatbot = graph.compile(checkpointer=checkpointer)
+
+# Example of invoking the chatbot and streaming responses
+
+# for message_chunk, metadata in chatbot.stream(
+#     {"messages": [HumanMessage(content="What is recipe for pasta?")]},
+#     config={"configurable": {"thread_id": "thread-001"}},
+#     stream_mode="messages",
+# ):
+#     if message_chunk.content:
+#         print(message_chunk.content, end=" ", flush=True)
