@@ -1,5 +1,5 @@
 import streamlit as st
-from Backend_LangGrapth import chatbot
+from Backend_LangGrapth import chatbot, retrieve_thread_ids
 from langchain.messages import HumanMessage
 import uuid  # used for creating unique thread IDs for conversations
 
@@ -31,9 +31,8 @@ def add_threads(thread_id):
 
 
 def load_conversation(thread_id):
-    return chatbot.get_state(config={"configurable": {"thread_id": thread_id}}).values[
-        "messages"
-    ]
+    state = chatbot.get_state(config={"configurable": {"thread_id": thread_id}})
+    return state.values.get("messages", [])
 
 
 # -----------------------------------Session State Initialization-----------------------
@@ -46,7 +45,7 @@ if "thread_id" not in st.session_state:
     st.session_state["thread_id"] = generate_thread_id()
 
 if "chat_threads" not in st.session_state:
-    st.session_state["chat_threads"] = []
+    st.session_state["chat_threads"] = retrieve_thread_ids()
 
 add_threads(st.session_state["thread_id"])
 
